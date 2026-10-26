@@ -10,7 +10,8 @@ export async function GET() {
     return Response.json({ status: 'ok', database: 'connected' }, {
       headers: { 'Cache-Control': 'no-store' },
     });
-  } catch {
+  } catch (error) {
+    console.error('Health check failed:', error.message);
     return Response.json({ status: 'unavailable', database: 'disconnected' }, {
       status: 503,
       headers: { 'Cache-Control': 'no-store' },

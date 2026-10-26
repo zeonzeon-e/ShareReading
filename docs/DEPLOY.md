@@ -100,13 +100,14 @@ curl --fail https://<배포-도메인>/api/health
 # {"status":"ok","database":"connected"}
 ```
 
-`/api/health`가 503이면 아래를 차례로 확인합니다.
-현재 `/api/health`는 실패 원인을 로그에 남기지 않으므로 설정을 직접 점검해야 합니다.
+`/api/health`가 503이면 Vercel **Logs**에서 `Health check failed:` 로 시작하는 줄을 찾아 원인을 확인합니다.
 
-1. 해당 환경(Production/Preview)에 `DATABASE_URL`이 등록됐고, 등록 후 Redeploy 했는지
-2. 주소 끝이 `?sslmode=no-verify`인지 (Vercel 로그에 `SECURITY WARNING: The SSL modes 'prefer', 'require' ...` 경고가 보이면 `require`로 되어 있는 것)
-3. 포트가 `6543`이고 사용자명이 `postgres.<프로젝트-ref>` 형식인지, 비밀번호가 맞는지
-4. Supabase 프로젝트가 일시 정지되지 않았는지
+| 로그 메시지 | 확인할 것 |
+|---|---|
+| `DATABASE_URL is required` | 해당 환경(Production/Preview)에 변수가 등록됐는지, 등록 후 Redeploy 했는지 |
+| `self-signed certificate in certificate chain` | 주소 끝이 `?sslmode=no-verify`인지 (`require`이면 이 오류와 함께 `SECURITY WARNING` 경고가 보임) |
+| `password authentication failed` | 포트가 `6543`이고 사용자명이 `postgres.<프로젝트-ref>` 형식인지, 비밀번호가 맞는지 |
+| `timeout` 관련 메시지 | Supabase 프로젝트가 일시 정지되지 않았는지 |
 
 ## 5. 권장 설정
 

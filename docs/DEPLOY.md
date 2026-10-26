@@ -44,16 +44,19 @@ postgresql://postgres.<프로젝트-ref>:<비밀번호>@aws-0-<리전>.pooler.su
 - 포트가 **6543**인지 확인하세요. Direct connection(5432)은 서버리스 환경에서 연결 수가 금방 가득 찹니다.
 - 현재 코드는 이름 있는 prepared statement를 쓰지 않으므로 Transaction 모드에서 문제없이 동작합니다.
 
-### SSL 주의 사항
+### SSL 설정: 주소 끝에 `?sslmode=no-verify`
 
-이 프로젝트가 사용하는 `pg`(pg-connection-string 2.14)는 주소의 `sslmode=require`를 **`verify-full`(인증서 검증)** 로 처리합니다.
-Supabase 인증서는 Supabase 자체 CA로 서명되어 있어 Node.js 기본 신뢰 목록으로는 검증에 실패할 수 있습니다.
-(`self-signed certificate in certificate chain` 오류)
+주소 끝에 반드시 **`?sslmode=no-verify`** 를 붙입니다. 코드 수정 없이 주소만으로 SSL 동작이 정해집니다.
 
-- `sslmode` 없이 주소를 쓰면 **암호화 없이** 접속하므로 사용하지 마세요. (Enforce SSL을 켰다면 접속이 거부됩니다)
-- 첫 배포 후 `/api/health`가 503이고 Vercel 로그에 위 오류가 보이면, Supabase CA 인증서를 코드에서 지정하도록 수정이 필요합니다.
-  (**Project Settings → Database → SSL Configuration → Download certificate**)
-- 수정 전까지 임시로 `sslmode=no-verify`를 사용할 수 있으나, 암호화만 되고 서버 검증은 하지 않으므로 운영에 계속 쓰지 마세요.
+| 주소 끝 | 동작 |
+|---|---|
+| (없음) | **암호화 없이** 접속. 사용 금지 (Enforce SSL을 켰다면 접속 거부) |
+| `?sslmode=require` | 접속 실패(503). 이 프로젝트의 `pg`는 `require`를 `verify-full`(인증서 검증)로 처리하는데, Supabase 인증서는 자체 CA로 서명되어 Node.js 기본 신뢰 목록으로 검증할 수 없습니다 |
+| `?sslmode=no-verify` | **암호화된 연결**, 서버 인증서 검증은 생략. 현재 표준 설정 |
+
+`no-verify`는 통신을 암호화하지만 접속한 서버가 진짜 Supabase인지는 확인하지 않습니다.
+보안 요구 수준이 높아지면 Supabase CA 인증서(**Project Settings → Database → SSL Configuration → Download certificate**)로
+서버를 검증하도록 `lib/db.js`를 개선해야 합니다.
 
 ### 무료 플랜 제약
 
@@ -79,7 +82,7 @@ Vercel 프로젝트 **Settings → Environment Variables**
 
 | 이름 | 적용 환경 | 값 |
 |---|---|---|
-| `DATABASE_URL` | Production | 운영 Supabase의 Transaction pooler 주소 + `?sslmode=require` |
+| `DATABASE_URL` | Production | 운영 Supabase의 Transaction pooler 주소 + `?sslmode=no-verify` |
 | `DATABASE_URL` | Preview | 미리보기용 Supabase 주소 (없으면 Preview의 `/api/health`는 503) |
 
 - DB 비밀번호가 담긴 주소를 메신저나 Git에 붙여 넣지 마세요. DB 담당이 Vercel에 직접 등록하는 것이 가장 안전합니다.
@@ -97,14 +100,13 @@ curl --fail https://<배포-도메인>/api/health
 # {"status":"ok","database":"connected"}
 ```
 
-`/api/health`가 503이면 Vercel **Logs**에서 원인을 확인합니다.
+`/api/health`가 503이면 아래를 차례로 확인합니다.
+현재 `/api/health`는 실패 원인을 로그에 남기지 않으므로 설정을 직접 점검해야 합니다.
 
-| 증상 | 확인할 것 |
-|---|---|
-| `DATABASE_URL is required` | 해당 환경(Production/Preview)에 변수가 등록됐는지, 등록 후 Redeploy 했는지 |
-| `self-signed certificate in certificate chain` | 위 **SSL 주의 사항** 참고 |
-| `password authentication failed` | 주소의 사용자명이 `postgres.<프로젝트-ref>` 형식인지, 비밀번호가 맞는지 |
-| 연결 시간 초과 | Supabase 프로젝트가 일시 정지되지 않았는지 |
+1. 해당 환경(Production/Preview)에 `DATABASE_URL`이 등록됐고, 등록 후 Redeploy 했는지
+2. 주소 끝이 `?sslmode=no-verify`인지 (Vercel 로그에 `SECURITY WARNING: The SSL modes 'prefer', 'require' ...` 경고가 보이면 `require`로 되어 있는 것)
+3. 포트가 `6543`이고 사용자명이 `postgres.<프로젝트-ref>` 형식인지, 비밀번호가 맞는지
+4. Supabase 프로젝트가 일시 정지되지 않았는지
 
 ## 5. 권장 설정
 

@@ -45,6 +45,10 @@ curl --fail http://localhost:3000/api/health
 
 현재 자동화된 기능 테스트는 없습니다. 위 명령으로 빌드 및 실제 DB 연결을 확인합니다.
 
+## 배포
+
+Vercel의 GitHub 연동으로 배포합니다. 설정 방법은 [docs/DEPLOY.md](docs/DEPLOY.md)를 참고하세요.
+
 ## DB 중지
 
 ```bash

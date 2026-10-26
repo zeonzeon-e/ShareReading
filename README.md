@@ -47,7 +47,7 @@ curl --fail http://localhost:3000/api/health
 
 ## 배포
 
-Vercel의 GitHub 연동으로 배포합니다. 설정 방법은 [docs/DEPLOY.md](docs/DEPLOY.md)를 참고하세요.
+Vercel(앱)과 Supabase(PostgreSQL)로 배포합니다. 설정 방법은 [docs/DEPLOY.md](docs/DEPLOY.md)를 참고하세요.
 
 ## DB 중지
 

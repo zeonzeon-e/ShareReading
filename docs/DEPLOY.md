@@ -1,12 +1,12 @@
 # 배포 가이드 (Vercel + Supabase)
 
 ShareReading은 Vercel의 GitHub 연동으로 배포하고, 운영 DB는 Supabase PostgreSQL을 사용합니다.
-GitHub Actions(`.github/workflows/ci.yml`)는 빌드와 동작 확인만 담당하고, 배포는 Vercel이 처리합니다.
+GitHub Actions(`.github/workflows/ci.yml`)는 검사·빌드와 동작 확인만 담당하고, 배포는 Vercel이 처리합니다.
 
 | 이벤트 | GitHub Actions | Vercel |
 |---|---|---|
-| `main` 대상 PR 생성·갱신 | 빌드 + 스모크 테스트 | Preview 배포 (PR에 미리보기 URL 표시) |
-| `main`에 push(머지) | 빌드 + 스모크 테스트 | Production 배포 |
+| `main` 대상 PR 생성·갱신 | 정적 검사·타입 검사·빌드 + 스모크 테스트 | Preview 배포 (PR에 미리보기 URL 표시) |
+| `main`에 push(머지) | 정적 검사·타입 검사·빌드 + 스모크 테스트 | Production 배포 |
 
 로컬 개발은 기존처럼 `compose.yaml`의 PostgreSQL을 사용합니다. Supabase는 배포 환경에서만 사용합니다.
 

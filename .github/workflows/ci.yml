@@ -43,9 +43,11 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
       - run: npm run build
 
-      # README의 "빌드 및 검증" 절차: 운영 서버를 띄워 시작 화면과 DB 상태 확인 API를 호출
+      # README의 "빌드 및 검증" 절차: 운영 서버를 띄워 주요 화면과 DB 상태 확인 API를 호출
       - name: Smoke test
         run: |
           npm start > server.log 2>&1 &
@@ -54,6 +56,7 @@ jobs:
             sleep 1
           done
           curl --fail --silent --show-error http://localhost:3000 > /dev/null
+          curl --fail --silent --show-error http://localhost:3000/rooms > /dev/null
           curl --fail --silent --show-error http://localhost:3000/api/health
 
       - if: failure()

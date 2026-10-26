@@ -56,7 +56,7 @@ postgresql://postgres.<프로젝트-ref>:<비밀번호>@aws-0-<리전>.pooler.su
 
 `no-verify`는 통신을 암호화하지만 접속한 서버가 진짜 Supabase인지는 확인하지 않습니다.
 보안 요구 수준이 높아지면 Supabase CA 인증서(**Project Settings → Database → SSL Configuration → Download certificate**)로
-서버를 검증하도록 `lib/db.js`를 개선해야 합니다.
+서버를 검증하도록 `lib/db.ts`를 개선해야 합니다.
 
 ### 무료 플랜 제약
 

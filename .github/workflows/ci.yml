@@ -52,11 +52,12 @@ jobs:
         run: |
           npm start > server.log 2>&1 &
           for i in $(seq 1 30); do
-            curl --silent --fail --output /dev/null http://localhost:3000 && break
+            curl --silent --fail --output /dev/null http://localhost:3000/tabs && break
             sleep 1
           done
-          curl --fail --silent --show-error http://localhost:3000 > /dev/null
-          curl --fail --silent --show-error http://localhost:3000/rooms > /dev/null
+          curl --fail --silent --show-error --location http://localhost:3000 > /dev/null
+          curl --fail --silent --show-error http://localhost:3000/tabs > /dev/null
+          curl --fail --silent --show-error http://localhost:3000/tabs/rooms > /dev/null
           curl --fail --silent --show-error http://localhost:3000/api/health
 
       - if: failure()

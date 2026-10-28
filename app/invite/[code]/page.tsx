@@ -15,7 +15,7 @@ export default async function InvitePage({ params }: PageProps<'/invite/[code]'>
       <p>
         초대 코드: <code>{code}</code>
       </p>
-      <Link href="/">홈으로</Link>
+      <Link href="/tabs">홈으로</Link>
     </PagePlaceholder>
   );
 }

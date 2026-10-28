@@ -4,7 +4,7 @@ import PagePlaceholder from '@/components/page-placeholder';
 
 export const metadata: Metadata = { title: '모임방 상세' };
 
-export default async function RoomDetailPage({ params }: PageProps<'/rooms/[roomId]'>) {
+export default async function RoomDetailPage({ params }: PageProps<'/tabs/rooms/[roomId]'>) {
   const { roomId } = await params;
 
   return (
@@ -15,7 +15,7 @@ export default async function RoomDetailPage({ params }: PageProps<'/rooms/[room
       <p>
         모임방 ID: <code>{roomId}</code>
       </p>
-      <Link href="/rooms">모임방 목록으로</Link>
+      <Link href="/tabs/rooms">모임방 목록으로</Link>
     </PagePlaceholder>
   );
 }

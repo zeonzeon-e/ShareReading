@@ -10,7 +10,7 @@ export default function RoomsPage() {
       title="모임방"
       description="참여 중인 모임방 목록을 보여 줄 예정입니다."
     >
-      <Link href="/rooms/new">모임방 만들기</Link>
+      <Link href="/tabs/rooms/new">모임방 만들기</Link>
     </PagePlaceholder>
   );
 }

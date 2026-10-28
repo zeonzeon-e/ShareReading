@@ -95,7 +95,7 @@ Vercel 프로젝트 **Settings → Environment Variables**
 배포 URL에서 아래를 확인합니다.
 
 ```bash
-curl --fail https://<배포-도메인>/
+curl --fail --location https://<배포-도메인>/
 curl --fail https://<배포-도메인>/api/health
 # {"status":"ok","database":"connected"}
 ```
